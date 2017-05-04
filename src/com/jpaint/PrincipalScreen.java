@@ -106,18 +106,6 @@ public class PrincipalScreen extends JFrame {
 	}
 
 	public static void main(String[] args) {
-
-		for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-			if ("Windows".equals(info.getName())) {
-				try {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException
-						| UnsupportedLookAndFeelException e) {
-					e.printStackTrace();
-				}
-				break;
-			}
-		}
 		
 		SwingUtilities.invokeLater(() -> {
 			new PrincipalScreen().setVisible(true);

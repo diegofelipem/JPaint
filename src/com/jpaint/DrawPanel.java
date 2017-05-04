@@ -116,6 +116,7 @@ public class DrawPanel extends JPanel {
 	}
 
 	public void clear() {
+		this.setBackground(new Color(255, 255, 255));
 		Graphics2D g2 = bfImage.createGraphics();
 		g2.setBackground(new Color(255, 255, 255, 0));
 		g2.clearRect(0, 0, bfImage.getWidth(), bfImage.getHeight());
