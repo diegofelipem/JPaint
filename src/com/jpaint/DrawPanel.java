@@ -98,9 +98,8 @@ public class DrawPanel extends JPanel {
 		Graphics2D g2 = bfImage.createGraphics();
 
 		g2.setColor(activeColor);
-
-		RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g2.setRenderingHints(rh);
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		
 		if (newPoint != null) {
 			g2.drawLine(oldPoint.x, oldPoint.y, newPoint.x, newPoint.y);
 		}
