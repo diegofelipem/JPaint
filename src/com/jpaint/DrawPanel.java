@@ -13,8 +13,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
@@ -81,7 +85,7 @@ public class DrawPanel extends JPanel {
 	private void resizeBufferredImage(int newWidth, int newHeight) {
 		BufferedImage newbfImage = new BufferedImage(newWidth, newHeight, bfImage.getType());
 		Graphics2D g = newbfImage.createGraphics();
-		//g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		g.drawImage(bfImage, 0, 0, newWidth, newHeight, 0, 0, bfImage.getWidth(), bfImage.getHeight(), null);
 		g.dispose();
 		bfImage = newbfImage;
@@ -113,6 +117,17 @@ public class DrawPanel extends JPanel {
 
 		super.paintComponent(g);
 		g.drawImage(bfImage, 0, 0, null);
+	}
+
+	public void saveFile(String output) {
+
+		File outputImage = new File(output + ".png");
+
+		try {
+			ImageIO.write(bfImage, "png", outputImage);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage());
+		}
 	}
 
 	public void clear() {

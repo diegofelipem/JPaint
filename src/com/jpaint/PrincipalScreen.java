@@ -3,16 +3,17 @@ package com.jpaint;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JColorChooser;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
 
 public class PrincipalScreen extends JFrame {
@@ -20,7 +21,8 @@ public class PrincipalScreen extends JFrame {
 	private static final long serialVersionUID = 1L;
 	JPanel contentPane;
 	DrawPanel drawPanel;
-	JColorChooser chooser;
+	JColorChooser colorChooser;
+	JFileChooser fileChooser;
 
 	public PrincipalScreen() {
 		initComponents();
@@ -30,24 +32,25 @@ public class PrincipalScreen extends JFrame {
 		
 		JPanel colorPanel = new JPanel();
 
-		chooser = new JColorChooser();
+		colorChooser = new JColorChooser();
+		fileChooser = new JFileChooser();
 
-		for (AbstractColorChooserPanel c : chooser.getChooserPanels()) {
+		for (AbstractColorChooserPanel c : colorChooser.getChooserPanels()) {
 			String className = c.getClass().getName();
 			if (!className.contains("DefaultSwatchChooserPanel")) {
-				chooser.removeChooserPanel(c);
+				colorChooser.removeChooserPanel(c);
 			}
 		}
 
-		chooser.setPreviewPanel(new JPanel());
+		colorChooser.setPreviewPanel(new JPanel());
 
-		chooser.getSelectionModel().addChangeListener(e -> {
+		colorChooser.getSelectionModel().addChangeListener(e -> {
 			Color c = getSelectedChooserColor();
 			if (!drawPanel.getBackground().equals(c))
 				drawPanel.setActiveColor(c);
 		});
 
-		colorPanel.add(chooser);
+		colorPanel.add(colorChooser);
 		colorPanel.setBorder(BorderFactory.createTitledBorder("Paleta"));
 		
 		setJMenuBar(getMenu());
@@ -63,7 +66,7 @@ public class PrincipalScreen extends JFrame {
 	}
 	
 	private Color getSelectedChooserColor(){
-		return chooser.getColor() != null ?  chooser.getColor() : Color.BLACK;
+		return colorChooser.getColor() != null ?  colorChooser.getColor() : Color.BLACK;
 	}
 
 	private JMenuBar getMenu() {
@@ -79,8 +82,19 @@ public class PrincipalScreen extends JFrame {
 		});
 		
 		JMenuItem itemSave = new JMenuItem("Save...");
-		itemNew.addActionListener(e -> {
-			
+		itemSave.addActionListener(e -> {
+			String path = System.getProperty("user.home") + File.separator + "myPaintImages";
+			if (!new File(path).exists()) {
+				new File(path).mkdir();
+			}
+			fileChooser.setCurrentDirectory(new File(path));
+			int returnVal = fileChooser.showSaveDialog(this);
+			if(returnVal ==  JFileChooser.APPROVE_OPTION){
+				System.out.println(fileChooser.getCurrentDirectory());
+				System.out.println();
+				String output = fileChooser.getSelectedFile().toString();
+				drawPanel.saveFile(output);
+			}
 		});
 		
 		menu.add(itemNew);
