@@ -118,6 +118,7 @@ public class PrincipalScreen extends JFrame {
 				break;
 			}
 		}
+		
 		SwingUtilities.invokeLater(() -> {
 			new PrincipalScreen().setVisible(true);
 		});
