@@ -7,6 +7,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.RenderingHints;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -20,21 +22,20 @@ public class DrawPanel extends JPanel {
 
 	private static final long serialVersionUID = 1L;
 	private BufferedImage bfImage;
-	private int WIDTH = 450;
-	private int HEIGHT = 300;
 	private Point oldPoint = null;
 	private Point newPoint = null;
 	private Color activeColor = Color.black;
 
 	public DrawPanel() {
-		
-		bfImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
-				
+
+		initComponents();
+
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				newPoint = e.getPoint();
-				updateImage();;
+				updateImage();
+				;
 				newPoint = null;
 				oldPoint = null;
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
@@ -42,7 +43,7 @@ public class DrawPanel extends JPanel {
 
 			@Override
 			public void mousePressed(MouseEvent e) {
-				if(oldPoint == null){
+				if (oldPoint == null) {
 					oldPoint = e.getPoint();
 				}
 			}
@@ -54,38 +55,57 @@ public class DrawPanel extends JPanel {
 			public void mouseDragged(MouseEvent e) {
 				setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 				newPoint = e.getPoint();
-				updateImage();	
+				updateImage();
 				oldPoint = newPoint;
 			}
 		});
-		
+
+		addComponentListener(new ComponentAdapter() {
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				super.componentResized(e);
+				Dimension d = e.getComponent().getSize();
+				resizeBufferredImage(d.width, d.height);
+			}
+		});
+	}
+
+	private void initComponents() {
+		bfImage = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_ARGB);
+
 		setBackground(Color.white);
 		setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
+	}
+
+	private void resizeBufferredImage(int newWidth, int newHeight) {
+		BufferedImage newbfImage = new BufferedImage(newWidth, newHeight, bfImage.getType());
+		Graphics2D g = newbfImage.createGraphics();
+		//g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+		g.drawImage(bfImage, 0, 0, newWidth, newHeight, 0, 0, bfImage.getWidth(), bfImage.getHeight(), null);
+		g.dispose();
+		bfImage = newbfImage;
+		repaint();
+
 	}
 
 	private void updateImage() {
 
 		Graphics2D g2 = bfImage.createGraphics();
-		
+
 		g2.setColor(activeColor);
 
 		RenderingHints rh = new RenderingHints(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g2.setRenderingHints(rh);
-		if(newPoint != null){
-			g2.drawLine(oldPoint.x, oldPoint.y, newPoint.x, newPoint.y);	
-		}		
+		if (newPoint != null) {
+			g2.drawLine(oldPoint.x, oldPoint.y, newPoint.x, newPoint.y);
+		}
 		g2.dispose();
 		repaint();
 	}
-	
 
 	public void setActiveColor(Color activeColor) {
 		this.activeColor = activeColor;
-	}	
-	
-	@Override
-	public Dimension getPreferredSize() {
-		return new Dimension(WIDTH, HEIGHT);
 	}
 
 	@Override
@@ -94,11 +114,11 @@ public class DrawPanel extends JPanel {
 		super.paintComponent(g);
 		g.drawImage(bfImage, 0, 0, null);
 	}
-	
-	public void clear(){
+
+	public void clear() {
 		Graphics2D g2 = bfImage.createGraphics();
 		g2.setBackground(new Color(255, 255, 255, 0));
-		g2.clearRect(0, 0, WIDTH, HEIGHT);
+		g2.clearRect(0, 0, bfImage.getWidth(), bfImage.getHeight());
 		repaint();
 	}
 }
