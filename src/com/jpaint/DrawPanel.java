@@ -1,7 +1,6 @@
 package com.jpaint;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -29,6 +28,7 @@ public class DrawPanel extends JPanel {
 	private Point oldPoint = null;
 	private Point newPoint = null;
 	private Color activeColor = Color.black;
+	private boolean eraserActive = false;
 
 	public DrawPanel() {
 
@@ -39,10 +39,8 @@ public class DrawPanel extends JPanel {
 			public void mouseReleased(MouseEvent e) {
 				newPoint = e.getPoint();
 				updateImage();
-				;
 				newPoint = null;
 				oldPoint = null;
-				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 
 			@Override
@@ -57,7 +55,6 @@ public class DrawPanel extends JPanel {
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 				newPoint = e.getPoint();
 				updateImage();
 				oldPoint = newPoint;
@@ -98,13 +95,14 @@ public class DrawPanel extends JPanel {
 		Graphics2D g2 = bfImage.createGraphics();
 
 		g2.setColor(activeColor);
-		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		
+
 		if (newPoint != null) {
+
+			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.drawLine(oldPoint.x, oldPoint.y, newPoint.x, newPoint.y);
+			g2.dispose();
+			repaint();
 		}
-		g2.dispose();
-		repaint();
 	}
 
 	public void setActiveColor(Color activeColor) {
@@ -116,6 +114,10 @@ public class DrawPanel extends JPanel {
 
 		super.paintComponent(g);
 		g.drawImage(bfImage, 0, 0, null);
+	}
+
+	public void activateErase(boolean active) {
+		this.eraserActive = active;
 	}
 
 	public void saveFile(String output) {
