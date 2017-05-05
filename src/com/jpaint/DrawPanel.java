@@ -28,7 +28,6 @@ public class DrawPanel extends JPanel {
 	private Point oldPoint = null;
 	private Point newPoint = null;
 	private Color activeColor = Color.black;
-	private boolean eraserActive = false;
 
 	public DrawPanel() {
 
@@ -92,11 +91,10 @@ public class DrawPanel extends JPanel {
 
 	private void updateImage() {
 
-		Graphics2D g2 = bfImage.createGraphics();
-
-		g2.setColor(activeColor);
-
 		if (newPoint != null) {
+
+			Graphics2D g2 = bfImage.createGraphics();
+			g2.setColor(activeColor);
 
 			g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 			g2.drawLine(oldPoint.x, oldPoint.y, newPoint.x, newPoint.y);
@@ -114,10 +112,6 @@ public class DrawPanel extends JPanel {
 
 		super.paintComponent(g);
 		g.drawImage(bfImage, 0, 0, null);
-	}
-
-	public void activateErase(boolean active) {
-		this.eraserActive = active;
 	}
 
 	public void saveFile(String output) {
