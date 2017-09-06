@@ -57,16 +57,15 @@ public class PrincipalScreen extends JFrame {
 		drawPanel = new DrawPanel();
 		getContentPane().add(colorPanel, BorderLayout.NORTH);
 		getContentPane().add(drawPanel, BorderLayout.CENTER);
-		
-		setPreferredSize(new Dimension(500, 450));
-		setMinimumSize(new Dimension(435, 450));
+
+		setResizable(false);
 		pack();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 	}
 	
 	private Color getSelectedChooserColor(){
-		return colorChooser.getColor() != null ?  colorChooser.getColor() : Color.BLACK;
+		return colorChooser.getColor() != null ?  colorChooser.getColor() : Color.WHITE;
 	}
 
 	private JMenuBar getMenu() {
@@ -76,9 +75,17 @@ public class PrincipalScreen extends JFrame {
 		JMenu menu = new JMenu("File");
 		menuBar.add(menu);
 		
-		JMenuItem itemNew = new JMenuItem("New...");
+		JMenuItem itemNew = new JMenuItem("Open...");
 		itemNew.addActionListener(e -> {
-			
+			String path = System.getProperty("user.home") + File.separator + "myPaintImages";
+			if (!new File(path).exists()) {
+				new File(path).mkdir();
+			}
+			fileChooser.setCurrentDirectory(new File(path));
+			int returnVal = fileChooser.showOpenDialog(this);
+			if(returnVal ==  JFileChooser.APPROVE_OPTION){
+				drawPanel.openFile(fileChooser.getSelectedFile());
+			}
 		});
 		
 		JMenuItem itemSave = new JMenuItem("Save...");
@@ -90,8 +97,7 @@ public class PrincipalScreen extends JFrame {
 			fileChooser.setCurrentDirectory(new File(path));
 			int returnVal = fileChooser.showSaveDialog(this);
 			if(returnVal ==  JFileChooser.APPROVE_OPTION){
-				String output = fileChooser.getSelectedFile().toString();
-				drawPanel.saveFile(output);
+				drawPanel.saveFile(fileChooser.getSelectedFile());
 			}
 		});
 		

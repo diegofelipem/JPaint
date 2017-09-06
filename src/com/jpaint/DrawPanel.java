@@ -114,15 +114,21 @@ public class DrawPanel extends JPanel {
 		g.drawImage(bfImage, 0, 0, null);
 	}
 
-	public void saveFile(String output) {
+	public void saveFile(File file) {
 
-		File outputImage = new File(output + ".png");
+		File outputImage = new File(file + ".png");
 
 		try {
 			ImageIO.write(bfImage, "png", outputImage);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, e.getMessage());
 		}
+	}
+	
+	@Override
+	public Dimension getPreferredSize() {
+		
+		return new Dimension(800, 400);
 	}
 
 	public void clear() {
@@ -131,5 +137,16 @@ public class DrawPanel extends JPanel {
 		g2.setBackground(new Color(255, 255, 255, 0));
 		g2.clearRect(0, 0, bfImage.getWidth(), bfImage.getHeight());
 		repaint();
+	}
+
+	public void openFile(File output) {
+
+		try {
+			bfImage = ImageIO.read(output);
+			repaint();
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, e.getMessage());
+		}
+		
 	}
 }
